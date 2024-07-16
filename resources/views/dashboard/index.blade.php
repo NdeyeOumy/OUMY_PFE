@@ -131,7 +131,8 @@
                 </div>
             </div>
         </div>
-        <br />
+        
+        {{-- <br />
 
         <div class="row">
             <div class="col-md-4 col-sm-4">
@@ -188,7 +189,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- /row -->
     </div>
     <!-- /page content -->

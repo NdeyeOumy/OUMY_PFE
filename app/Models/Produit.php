@@ -17,5 +17,9 @@ class Produit extends Model
         'image', 
     ];
     
+    public function details()
+{
+    return $this->hasMany(DetailVente::class);
+}
     
 }

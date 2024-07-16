@@ -12,7 +12,7 @@
             <div class="page-title">
                 <div class="title_left">
                     <h3>GESTION DES VENTES</h3>
-                </div>
+                </div> 
             </div>
 
             <div class="clearfix"></div>
@@ -52,44 +52,48 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="field item form-group">
-                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Produit<span class="required">*</span></label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <select class="form-control" name="idProduits" required>
-                                            @foreach($produits as $produit)
-                                                <option value="{{ $produit->id }}">{{ $produit->name_pdt }}</option>
-                                            @endforeach
-                                        </select>
+
+                                <span class="section">Détails des Produits</span>
+                                <div id="product-details">
+                                    <div class="field item form-group product-detail">
+                                        <label class="col-form-label col-md-3 col-sm-3 label-align">Produit<span class="required">*</span></label>
+                                        <div class="col-md-3 col-sm-3">
+                                            <select class="form-control" name="produits[0][id]" required>
+                                                @foreach($produits as $produit)
+                                                    <option value="{{ $produit->id }}">{{ $produit->name_pdt }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <label class="col-form-label col-md-2 col-sm-2 label-align">Quantité<span class="required">*</span></label>
+                                        <div class="col-md-3 col-sm-3">
+                                            <input class="form-control" type="number" name="produits[0][quantite]" required oninput="updateTotal(this)">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="field item form-group">
-                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Quantité<span class="required">*</span></label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input class="form-control" type="number" name="quantite" id="quantite" required oninput="calculateTotal()">
+                                    <div class="col-md-6 col-sm-6 offset-md-3">
+                                        <button type="button" id="add-product" class="btn btn-secondary">Ajouter un produit</button>
                                     </div>
                                 </div>
-                                <div class="field item form-group">
-                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Prix Unitaire<span class="required">*</span></label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input class="form-control" type="number" step="0.01" name="prix_unitaire" id="prix_unitaire" required oninput="calculateTotal()">
-                                    </div>
-                                </div>
-                                <div class="field item form-group">
-                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Total<span class="required">*</span></label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input class="form-control" type="number" step="0.01" name="total" id="total" required readonly>
-                                    </div>
-                                </div>
+
                                 <div class="field item form-group">
                                     <label class="col-form-label col-md-3 col-sm-3 label-align">Date de Vente<span class="required">*</span></label>
                                     <div class="col-md-6 col-sm-6">
                                         <input class="form-control" type="date" name="date_vente" required>
                                     </div>
                                 </div>
+
+                                <div class="field item form-group">
+                                    <label class="col-form-label col-md-3 col-sm-3 label-align">Total<span class="required">*</span></label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input class="form-control" type="number" step="0.01" name="total" id="total" required readonly>
+                                    </div>
+                                </div>
+
                                 <div class="field item form-group">
                                     <div class="col-md-6 col-sm-6 offset-md-3">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                                        <button type="submit" class="btn btn-primary">Enregister </button>
+                                        <button type="submit" class="btn btn-primary">Enregister</button>
                                     </div>
                                 </div>
                             </form>
@@ -103,10 +107,50 @@
 
 @section('jsblock')
     <script>
-        function calculateTotal() {
-            var quantite = document.getElementById('quantite').value;
-            var prix_unitaire = document.getElementById('prix_unitaire').value;
-            var total = quantite * prix_unitaire;
+        document.getElementById('add-product').addEventListener('click', function() {
+            var productDetails = document.getElementById('product-details');
+            var productDetailCount = document.querySelectorAll('.product-detail').length;
+
+            var newProductDetail = document.createElement('div');
+            newProductDetail.classList.add('field', 'item', 'form-group', 'product-detail');
+            newProductDetail.innerHTML = `
+                <label class="col-form-label col-md-3 col-sm-3 label-align">Produit<span class="required">*</span></label>
+                <div class="col-md-3 col-sm-3">
+                    <select class="form-control" name="produits[${productDetailCount}][id]" required>
+                        @foreach($produits as $produit)
+                            <option value="{{ $produit->id }}">{{ $produit->name_pdt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label class="col-form-label col-md-2 col-sm-2 label-align">Quantité<span class="required">*</span></label>
+                <div class="col-md-3 col-sm-3">
+                    <input class="form-control" type="number" name="produits[${productDetailCount}][quantite]" required oninput="updateTotal(this)">
+                </div>
+            `;
+
+            productDetails.appendChild(newProductDetail);
+        });
+
+        function updateTotal(element) {
+            var productDetailElements = document.querySelectorAll('.product-detail');
+            var total = 0;
+
+            productDetailElements.forEach(function(detail) {
+                var produitSelect = detail.querySelector('select');
+                var quantiteInput = detail.querySelector('input[name*="quantite"]');
+
+                if (produitSelect && quantiteInput) {
+                    var produitId = produitSelect.value;
+                    var quantite = parseFloat(quantiteInput.value);
+
+                    @foreach($produits as $produit)
+                        if (produitId == {{ $produit->id }}) {
+                            total += quantite * {{ $produit->prix_unitaire }};
+                        }
+                    @endforeach
+                }
+            });
+
             document.getElementById('total').value = total.toFixed(2);
         }
     </script>

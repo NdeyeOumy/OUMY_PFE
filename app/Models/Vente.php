@@ -11,27 +11,24 @@ class Vente extends Model
 
     protected $fillable = [
         'idClients',
-        'idProduits',
-        'quantite', 
-        'prix_unitaire', 
+        'date_vente',
         'total',
-        'date_vente',  // Changer le nom de la colonne date_vente en date_achat pour la clé étrangère
     ];
 
-    public function user()
+    public function details()
     {
-        return $this->belongsTo(User::class, 'idUsers');
+        return $this->hasMany(DetailVente::class);
     }
-    
+
     public function client()
     {
         return $this->belongsTo(Client::class, 'idClients');
     }
 
+    // Dans le modèle Vente.php
     public function produit()
     {
-        return $this->belongsTo(Produit::class, 'idProduits', 'id');
+        return $this->belongsTo(Produit::class, 'idProduits');
     }
 
-    
 }

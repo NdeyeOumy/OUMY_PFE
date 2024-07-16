@@ -149,6 +149,7 @@
                                                                 <label class="col-form-label col-md-3 col-sm-3 label-align">Client<span class="required">*</span></label>
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <select class="form-control" name="idClients" required>
+                                                                        <option value="" selected disabled>Sélectionner un client</option>
                                                                         @foreach($clients as $client)
                                                                             <option value="{{ $client->id }}" {{ $vente->idClients == $client->id ? 'selected' : '' }}>
                                                                                 {{ CommonHelper::getFullName($client->first_name, $client->last_name) }}
